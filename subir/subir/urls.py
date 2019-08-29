@@ -14,8 +14,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.views.debug import default_urlconf
+from django.urls import path, include
+from django.conf.urls import url, re_path
+from venta.views import FichaPDFView
+from producto.views import FichaPDFViewProductos
+from cliente.views import FichaPDFViewClientesT, FichaPDFViewClientesF, FichaPDFViewClientes
+from trabajador.views import FichaPDFViewTrabajadores
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-]
+    path('rass/', admin.site.urls),
+    path('', include('producto.urls')),
+    url(r"^clientesactivos/", FichaPDFViewClientesT.as_view()),
+    url(r"^clientes/", FichaPDFViewClientes.as_view()),
+    url(r"^ProyectoFinal/ficha/(?P<id>)", FichaPDFView.as_view()),
+    url(r"^clientesinactivos/", FichaPDFViewClientesF.as_view()),
+    url(r"^productos/", FichaPDFViewProductos.as_view()),
+    url(r"^trabajadores/", FichaPDFViewTrabajadores.as_view()),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

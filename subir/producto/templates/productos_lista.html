@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #E06CA3;
+}
+
+.topnav a {
+  float: left;
+  color: coral;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+</style>
+
+{% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'logo.ico' %}"/>
+    <div class="topnav">
+        <center><h1>CREACIONES RASS</h1></center>
+    </div>
+    <title>CREACIONES RASS</title>
+    <center><img src="{% static "imgrass.PNG" %}" alt="My image" width="300" height="300"></center>
+</head>
+
+<body>
+
+{% if productos %}
+    {% for pr in productos %}
+        {% if pr.cantidad > 0 %}
+            {% if pr.visible == True %}
+                <div class="card">
+                    {% if pr.image %}
+                        <img src="{{ pr.image.url }}" alt="{{pr.nombre}}" style="width:100%">
+                    {% endif %}
+                    <h3>{{ pr.nombre }}</h3>
+		        </div>
+		       {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+</body>
+</html>
