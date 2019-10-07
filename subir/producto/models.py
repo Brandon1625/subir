@@ -25,17 +25,16 @@ class Producto(models.Model):
     ref = models.ForeignKey(
         Referencia, on_delete=models.CASCADE, null=True, blank=True)
     cantidad = models.PositiveIntegerField('cantidad', default=0)
+    precio = models.DecimalField('Precio', decimal_places=2, max_digits=12)
     activo = models.BooleanField(default=True, verbose_name='activo')
     visible = models.BooleanField(default=True, verbose_name='visible')
+    precio_visible = models.BooleanField(default=True, verbose_name='precio visible')
+    cantidad_visible = models.BooleanField(default=True, verbose_name='cantidad visible')
+    descripcion_visible = models.BooleanField(default=True, verbose_name='descripcion visible')
     image = models.ImageField(blank=True)
 
     def __str__(self):
         return self.nombre
-
-    def ficha(self):
-        return mark_safe(
-            u'<a href="/productos"target="_blank">Imprimir</a>')
-    ficha.short_description = 'Imprimir todos'
 
     class Meta:
         db_table = 'producto'

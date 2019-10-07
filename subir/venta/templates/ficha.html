@@ -1,84 +1,92 @@
-{% extends "easy_pdf/base.html" %}
-{% block content %}
 {% load static %}
+
+
 <!DOCTYPE HTML5>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="author" content="">
-        <meta name="description" content="Ejercicios prácticos HTML5">
-        <meta name="keywords" content="Ejercicios, Soluciones, Prácticas, HTML5">
-        <title>Venta numero: {{ miventa.no_vale }}</title>
-    </head>
-    <body>
-        <div id="content">
-        <img src="{% static "imgrass.PNG" %}" alt="My image" width="80" height="80">
-        <center><h1>CREACIONES RASS</h1>
-        <h2>VENTA DE ROPA POR MAYOR Y MENOR<br>
-        KM. 174 RUTA A ESQUIPULAS, SAN ESTEBAN, CHIQUIMULA</h2>
-        </center>
-        <h2>DATOS DE LA VENTA NUMERO: {{ miventa.no_vale }}</h2>
-            <h1>
-            <table>
+<head>
+<meta charset="UTF-8">
+
+
+<style>
+table1 {
+   position: absolute;
+   width: 100%;
+   border: 1px solid #999;
+   text-align: left;
+   border-collapse: collapse;
+   margin: 0 0 1em 0;
+   caption-side: top;
+}
+caption, td, th {
+   padding: 0.1em;
+}
+th, td {
+   border-bottom: 0.5px solid #999;
+   width: 50%;
+}
+caption {
+   font-weight: bold;
+   font-style: italic;
+}
+</style>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'logo.ico' %}"/>
+    <title>Venta numero: {{ miventa.no_venta }}</title>
+    <img alt="" src="{% static "head.PNG" %}">
+
+</head>
+<body>
+
+        <h2>DATOS DE LA VENTA NUMERO: {{ miventa.no_venta }}</h2>
+            <h3>
+            <table width="300" border="0">
                 <tr>
-                    <th>
-                        No. de venta:
-                    </th>
-                    <td>
-                        {{ miventa.no_vale }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
+                    <th align="left">
                         Comprador:
                     </th>
-                    <td>
+                    <td align="left">
                         {{ miventa.comprador }}
                     </td>
                 </tr>
                 <tr>
-                    <th>
+                    <th align="left">
                         Fecha de emision:
                     </th>
-                    <td>
-                        {{ miventa.fecha }}
+                    <td align="left">
+                        {{ miventa.fecha | date:"d/m/Y" }}
                     </td>
                 </tr>
                 <tr>
-                    <th>
+                    <th align="left">
                         Total:
                     </th>
-                    <td>
-                        {{ miventa.total }}
+                    <td align="left">
+                        Q{{ miventa.total }}0
                     </td>
                 </tr>
                 <tr>
-                    <th>
+                    <th align="left">
                         Tipo de pago:
                     </th>
-                    <td>
+                    <td align="left">
                         {{ miventa.pago }}
                     </td>
                 </tr>
                 <tr>
-                    <th>
+                    <th align="left">
                         Vendedor:
                     </th>
-                    <td>
+                    <td align="left">
                         {{ miventa.vendedor }}
                     </td>
                 </tr>
             </table>
-        </h1>
-    </div>
+        </h3>
+        <br>
 <!--
 -->
-
-<br>
-
-<h2>
-<table border="">
-    <h1><caption><center><h1>Listado de productos vendidos</h1></center></caption></h1>
+<table>
+    <h2><center>Listado de productos vendidos</center></h2>
+    <h2>
     <tr>
         <th>Producto</th>
         <th>Cantidad</th>
@@ -86,12 +94,12 @@
         <th>Subtotal</th>
     </tr>
     {% for deta1 in deta %}
-        {% if miventa.no_vale == deta1.id_vale.no_vale %}
+        {% if miventa.no_venta == deta1.id_venta.no_venta %}
         <tr>
-        <td><center>{{ deta1.id_prod }}</center></td>
-        <td><center>{{ deta1.canti }}</center></td>
-        <td><center>{{ deta1.precio }}</center></td>
-        <td><center>{{ deta1.subtotal }}</center></td>
+        <td><h2><center>{{ deta1.id_prod }}</center></td>
+        <td><h2><center>{{ deta1.canti }}</center></td>
+        <td><h2><center>Q{{ deta1.precio }}</center></td>
+        <td><h2><center>Q{{ deta1.subtotal }}</center></td>
         </tr>
         {% endif %}
     {% endfor %}
@@ -99,5 +107,4 @@
 </body>
 </html>
 
-{% endblock %}
 

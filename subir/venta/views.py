@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from easy_pdf.views import PDFTemplateView
-from .models import Vale, Detalle_Vale
+from .models import Venta, Detalle_Venta
 
 
 class FichaPDFView(PDFTemplateView):
@@ -8,8 +8,8 @@ class FichaPDFView(PDFTemplateView):
 
     def get_context_data(self, **kwargs):
         ids = self.request.GET.get("id")
-        miventa = Vale.objects.get(id=ids)
-        deta = Detalle_Vale.objects.all()
+        miventa = Venta.objects.get(id=ids)
+        deta = Detalle_Venta.objects.all()
         return super(FichaPDFView, self).get_context_data(
             pagesize="Letter",
             title="Ficha",

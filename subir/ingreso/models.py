@@ -5,11 +5,12 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.db.models import Sum, F
 from django.utils.safestring import mark_safe
+from datetime import datetime
 
 
 class Ingreso(models.Model):
     no_ingreso = models.IntegerField('No de ingreso', null=True, blank=True)
-    fecha = models.DateField('Fecha emision')
+    fecha = models.DateField('Fecha emision', default=datetime.now)
     vendedor = models.ForeignKey(
         Trabajador, on_delete=models.CASCADE, null=True, blank=True)
 
@@ -22,7 +23,7 @@ class Ingreso(models.Model):
             self.no_ingreso = 100 if not ingreso else ingreso.no_ingreso+1
 
     def ficha(self):
-        return mark_safe(u'<a href="/ficha/?id=%s" target="_blank">Imprimir</a>' % self.id)
+        return mark_safe(u'<a href="/ingreso/?id=%s" target="_blank">Imprimir</a>' % self.id)
     ficha.short_description = 'Imprimir'
 
     class Meta:
@@ -36,8 +37,8 @@ class Detalle_Ingreso(models.Model):
         Ingreso, on_delete=models.CASCADE, null=True,
         blank=True, related_name='detalles')
     id_prod = models.ForeignKey(
-        Producto, on_delete=models.CASCADE, null=True, blank=True)
-    canti = models.FloatField('Cantidad', default=0)
+        Producto, on_delete=models.CASCADE, null=True)
+    canti = models.PositiveIntegerField('Cantidad')
 
     def __str__(self):
         return "%s" % (self.id_ingreso)
@@ -47,17 +48,6 @@ class Detalle_Ingreso(models.Model):
         verbose_name = 'Detalle de ingreso de mercaderia'
         verbose_name_plural = 'Detalle de ingresos de mercaderia'
 
-
-@receiver(post_save, sender=Detalle_Ingreso)
-def trigger_aumetodelproducto1(sender, **kwargs):
-    linea = kwargs.get('instance')
-    ingreso = Ingreso.objects.get(id=linea.id_ingreso.id)
-    producto = Producto.objects.get(id=linea.id_prod.id)
-    producto.cantidad = producto.cantidad + linea.canti
-    producto.save()
-    ingreso.save()
-
-
 @receiver(post_delete, sender=Detalle_Ingreso)
 def trigger_borradodesproductos1(sender, **kwargs):
     linea = kwargs.get('instance')
@@ -66,3 +56,12 @@ def trigger_borradodesproductos1(sender, **kwargs):
     producto.cantidad = producto.cantidad - linea.canti
     producto.save()
     ingreso.save()
+
+
+@receiver(post_save, sender=Detalle_Ingreso)
+def trigger_aumetodelproducto1(sender, **kwargs):
+    linea = kwargs.get('instance')
+    producto = Producto.objects.get(id=linea.id_prod.id)
+    producto.cantidad = producto.cantidad + linea.canti
+    producto.save()
+

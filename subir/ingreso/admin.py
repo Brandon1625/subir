@@ -19,9 +19,9 @@ class ModeloResource(resources.ModelResource):
 class DetalleAdmin(admin.TabularInline):
     model = Detalle_Ingreso
     extra = 5
+    autocomplete_fields = ['id_prod']
 
-
-class ValeAdmin(ExportMixin, admin.ModelAdmin):
+class IngresoAdmin(ExportMixin, admin.ModelAdmin):
     list_display = [
         'no_ingreso', 'vendedor', 'fecha', 'ficha'
         ]
@@ -30,4 +30,4 @@ class ValeAdmin(ExportMixin, admin.ModelAdmin):
     exclude = ['no_ingreso']
     search_fields = ['comprador']
 
-admin.site.register(Ingreso, ValeAdmin)
+admin.site.register(Ingreso, IngresoAdmin)

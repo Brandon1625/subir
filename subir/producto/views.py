@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from easy_pdf.views import PDFTemplateView
 from .models import Producto
 from django.views.generic import ListView
+from django.db.models import Count, Q
 
 
 class FichaPDFViewProductos(PDFTemplateView):
@@ -21,3 +22,13 @@ def ProductoLista(request):
     prod = Producto.objects.all()
     contexto = {'productos':prod}
     return render(request, 'productos_lista.html', contexto)
+
+def contact(request):
+    return render(request, 'contacto.html', {})
+
+def productosgrafica(request):
+    dataset = Producto.objects \
+        .values('nombre','cantidad') \
+        .annotate(alta=Count('nombre', filter=Q(activo=True))) \
+        .order_by('-cantidad')
+    return render(request, 'ticket_class.html', {'dataset': dataset})

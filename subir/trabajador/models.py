@@ -5,6 +5,8 @@ from django.utils.safestring import mark_safe
 class Trabajador(Persona):
     codigo = models.IntegerField('Codigo')
     fecha_nacimiento = models.DateField('Fecha de nacimiento')
+    activo = models.BooleanField(default=True, verbose_name='activo')
+
 
     def clean(self):
         if not self.id:
@@ -16,7 +18,7 @@ class Trabajador(Persona):
 
     def ficha(self):
         return mark_safe(
-            u'<a href="/ProyectoFinal/trabajadores"target="_blank">Imprimir</a>')
+            u'<a href="trabajadores"target="_blank">Imprimir</a>')
     ficha.short_description = 'Imprimir todos'
 
     class Meta:

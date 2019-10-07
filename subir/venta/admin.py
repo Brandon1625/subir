@@ -7,31 +7,33 @@ from import_export.admin import ExportMixin
 
 class ModeloResource(resources.ModelResource):
     class Meta:
-        model = Vale
+        model = Venta
         fields = [
-            'no_vale', 'comprador', 'fecha', 'total',
+            'no_venta', 'comprador', 'fecha', 'total',
             'pago', 'vendedor'
         ]
         export_order = [
-            'no_vale', 'comprador', 'fecha', 'total',
+            'no_venta', 'comprador', 'fecha', 'total',
             'pago', 'vendedor'
         ]
 
 
 class DetalleAdmin(admin.TabularInline):
-    model = Detalle_Vale
+    model = Detalle_Venta
     extra = 5
     readonly_fields = ['subtotal']
+    autocomplete_fields = ['id_prod']
 
 
-class ValeAdmin(ExportMixin, admin.ModelAdmin):
+class VentaAdmin(ExportMixin, admin.ModelAdmin):
+    autocomplete_fields = ['comprador']
     list_display = [
-        'no_vale', 'vendedor', 'comprador',
+        'no_venta', 'vendedor', 'comprador',
         'fecha', 'pago', 'total', 'ficha']
     list_filter = ['vendedor', 'fecha']
     inlines = [DetalleAdmin]
     readonly_fields = ['total']
-    exclude = ['no_vale']
+    exclude = ['no_venta']
     search_fields = ['comprador']
 
-admin.site.register(Vale, ValeAdmin)
+admin.site.register(Venta, VentaAdmin)

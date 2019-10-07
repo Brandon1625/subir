@@ -23,6 +23,7 @@ from cliente.views import FichaPDFViewClientesT, FichaPDFViewClientesF, FichaPDF
 from trabajador.views import FichaPDFViewTrabajadores
 from django.conf import settings
 from django.conf.urls.static import static
+from ingreso.views import IngresoPDFView
 
 
 urlpatterns = [
@@ -30,7 +31,8 @@ urlpatterns = [
     path('', include('producto.urls')),
     url(r"^clientesactivos/", FichaPDFViewClientesT.as_view()),
     url(r"^clientes/", FichaPDFViewClientes.as_view()),
-    url(r"^ProyectoFinal/ficha/(?P<id>)", FichaPDFView.as_view()),
+    url(r"^ficha/(?P<id>)", FichaPDFView.as_view()),
+    url(r"^ingreso/(?P<id>)", IngresoPDFView.as_view()),
     url(r"^clientesinactivos/", FichaPDFViewClientesF.as_view()),
     url(r"^productos/", FichaPDFViewProductos.as_view()),
     url(r"^trabajadores/", FichaPDFViewTrabajadores.as_view()),

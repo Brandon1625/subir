@@ -8,13 +8,14 @@ from django.dispatch import receiver
 from django.db.models import Sum, F
 from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
+from datetime import datetime
 
 
-class Vale(models.Model):
-    no_vale = models.IntegerField('No de venta', null=True, blank=True)
+class Venta(models.Model):
+    no_venta = models.IntegerField('No de venta', null=True, blank=True)
     comprador = models.ForeignKey(
         Cliente, on_delete=models.CASCADE, null=True, blank=True)
-    fecha = models.DateField('Fecha emision')
+    fecha = models.DateField('Fecha emision', default=datetime.now)
     pago = models.ForeignKey(
         Tipopago, on_delete=models.CASCADE, null=True, blank=True)
     vendedor = models.ForeignKey(
@@ -22,15 +23,15 @@ class Vale(models.Model):
     total = models.FloatField('Total', default=0.00, null=True, blank=True)
 
     def __str__(self):
-        return "%s" % (self.no_vale)
+        return "%s" % (self.no_venta)
 
     def clean(self):
         if not self.id:
-            vale = Vale.objects.all().order_by('no_vale').last()
-            self.no_vale = 100 if not vale else vale.no_vale+1
+            venta = Venta.objects.all().order_by('no_venta').last()
+            self.no_venta = 100 if not venta else venta.no_venta+1
 
     def ficha(self):
-        return mark_safe(u'<a href="/ProyectoFinal/ficha/?id=%s" target="_blank">Imprimir</a>' % self.id)
+        return mark_safe(u'<a href="/ficha/?id=%s" target="_blank">Imprimir</a>' % self.id)
     ficha.short_description = 'Imprimir'
 
     class Meta:
@@ -39,20 +40,22 @@ class Vale(models.Model):
         verbose_name_plural = 'Ventas'
 
 
-class Detalle_Vale(models.Model):
-    id_vale = models.ForeignKey(
-        Vale, on_delete=models.CASCADE, null=True,
+class Detalle_Venta(models.Model):
+    id_venta = models.ForeignKey(
+        Venta, on_delete=models.CASCADE, null=True,
         blank=True, related_name='detalles')
     id_prod = models.ForeignKey(
-        Producto, on_delete=models.CASCADE, null=True, blank=True)
-    canti = models.FloatField('Cantidad', default=0)
-    precio = models.FloatField('Precio')
+        Producto, on_delete=models.CASCADE, null=True)
+    canti = models.PositiveIntegerField('Cantidad')
+    precio = models.DecimalField('Precio', decimal_places=2, max_digits=12)
     subtotal = models.FloatField('Subtotal', null=True, blank=True, editable=False)
 
     def clean(self):
+        if self.precio < 1:
+            raise ValidationError('No puedes vender con precios negativos.')
         self.subtotal = self.canti * self.precio
         if self.id:
-            actual = Detalle_Vale.objects.filter(id=self.id)[0]
+            actual = Detalle_Venta.objects.filter(id=self.id)[0]
             if self.canti <= self.id_prod.cantidad + actual.canti:
                 self.id_prod.cantidad = self.id_prod.cantidad + actual.canti - self.canti
                 self.id_prod.save()
@@ -66,29 +69,29 @@ class Detalle_Vale(models.Model):
             raise ValidationError('La cantidad es mayor a las existencias porque la existencia es {}'.format(self.id_prod.cantidad))
 
     def __str__(self):
-        return "%s" % (self.id_vale)
+        return "%s" % (self.id_venta)
 
     class Meta:
-        db_table = 'detalle_vale'
+        db_table = 'detalle_venta'
         verbose_name = 'Detalle de venta'
         verbose_name_plural = 'Detalle de ventas'
 
 
-@receiver(post_delete, sender=Detalle_Vale)
+@receiver(post_delete, sender=Detalle_Venta)
 def trigger_borradodedetalle(sender, **kwargs):
     linea = kwargs.get('instance')
-    vale = Vale.objects.get(id=linea.id_vale.id)
+    venta = Venta.objects.get(id=linea.id_venta.id)
     producto = Producto.objects.get(id=linea.id_prod.id)
-    vale.total = vale.detalles.aggregate(total=Sum(F('subtotal')))['total']
+    venta.total = venta.detalles.aggregate(total=Sum(F('subtotal')))['total']
     producto.cantidad = producto.cantidad + linea.canti
     producto.save()
-    vale.save()
+    venta.save()
 
 
 # Trigger para guardar totales
-@receiver(post_save, sender=Detalle_Vale)
-def trigger_sumadevale(sender, **kwargs):
+@receiver(post_save, sender=Detalle_Venta)
+def trigger_sumadeventa(sender, **kwargs):
     linea = kwargs.get('instance')
-    vale = Vale.objects.get(id=linea.id_vale.id)
-    vale.total = vale.detalles.aggregate(total=Sum(F('subtotal')))['total']
-    vale.save()
+    venta = Venta.objects.get(id=linea.id_venta.id)
+    venta.total = venta.detalles.aggregate(total=Sum(F('subtotal')))['total']
+    venta.save()

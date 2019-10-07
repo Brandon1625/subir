@@ -22,10 +22,10 @@ class ModeloResource(resources.ModelResource):
 class ClienteAdmin(ExportMixin, admin.ModelAdmin):
     actions = ['inactivar', 'activar', 'informe']
     list_display = [
-     'nit', 'nombre', 'apellido', 'direccion', 'email', 'activo', 'ficha'
+     'nit', 'nombre', 'apellido', 'direccion', 'email', 'activo'
      ]
     list_filter = ['direccion', 'activo']
-    search_fields = ['nombre']
+    search_fields = ['nombre', 'apellido']
 
     def inactivar(self, request, queryset):
 

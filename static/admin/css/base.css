@@ -522,7 +522,7 @@ input[type=button][disabled].default {
     font-weight: 400;
     font-size: 13px;
     text-align: left;
-    background: #79aec8;
+    background: #df72ae;
     color: #fff;
 }
 
@@ -646,16 +646,16 @@ div.system-message p.system-message-title {
 /* BREADCRUMBS */
 
 div.breadcrumbs {
-    background: #79aec8;
+    background: #df72ae;
     padding: 10px 40px;
-    border: none;
+    border: 1px;
     font-size: 14px;
-    color: #c4dce8;
+    color: black;
     text-align: left;
 }
 
 div.breadcrumbs a {
-    color: #fff;
+    color: black;
 }
 
 div.breadcrumbs a:focus, div.breadcrumbs a:hover {
@@ -934,7 +934,7 @@ table#change-history tbody th {
 }
 
 #content-related .module h2 {
-    background: none;
+    background: #df72ae;
     padding: 16px;
     margin-bottom: 16px;
     border-bottom: 1px solid #eaeaea;
